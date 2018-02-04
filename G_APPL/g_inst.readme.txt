@@ -1,0 +1,87 @@
+                                  Установка
+ 
+1) Исправить путь и запустить guana.sql: (иметь SQLServer 7)
+USE master
+GO
+CREATE DATABASE guana_bill
+ ON (name='dguana_bill', filename='f:\data\dguana_bill.dat', size=8MB) 
+        LOG ON (name='dguana_bill_log', filename='f:\data\dguana_bill_log.dat', size=4MB)
+GO
+ 
+2) Установить текущей БД guana_bill и запустить guana_grant.sql.
+ 
+3) Создать ODBC System DSN с именем guana для полученной БД guana_bill.
+ 
+4) Имея установленным IIS 4 поместить в каталог drive:\INETPUB\WWWROOT\GUANA файлы:
+   - g_appl.gapplet.html; (документ для открытия аплета)
+ 
+   - jbcl2.0-res-rt.jar;  (4 пакета из JBUILDER2\REDIST)
+   - jbcl2.0-rt.jar;
+   - jgl3.1.0.jar;
+   - swing.jar.
+ 
+   - создав подкаталог G_APPL поместить туда все файлы *.class.
+ 
+5) Выправить пути в файлах:
+   - sta2.bat (запуск RMI-сервера);
+set CLASSPATH=C:\ - это не исправлять. Начальный CLASSPATH должен быть пустым.
+start c:\rmiregistry.exe
+java.exe -Djava.rmi.server.hostname=server1 -Djava.rmi.server.codebase=file:/f:\work\G_APPL/ -classpath "F:\WORK\G_APPL\;E:\JBuilder2\lib\swingall.jar;E:\JBuilder2\lib\jbcl2.0.jar;E:\JBuilder2\lib\jbcl2.0-res.jar;E:\JBuilder2\java\lib\classes.zip" G_APPL.GServer gserver=SERVER1
+ 
+       server1 - заменить на имя машины;
+       file:/f:\work\G_APPL/ - заменить на  file:/drive:\INETPUB\WWWROOT\GUANA/
+       gserver=SERVER1 - тоже исправить
+       F:\WORK\G_APPL\  - заменить на  drive:\INETPUB\WWWROOT\GUANA\
+       остальные пути исправить в зависимости от местоположения этих пакетов.
+ 
+   - sta2_appl.bat (запуск аплета через appletviewer) - это не обязательно.
+ 
+6) Файл rmi.zip распаковать в каталог drive:\WINNT\JAVA\CLASSES\
+ 
+7) Установить переменную окружения JAVA_HOME = drive:\JBUILDER2\JAVA\
+--------------------------------------------------------------------------------------------
+                                  Запуск
+Иметь запущеным SqlServerAgent.
+1) Запустить sta2.bat.
+2) Запустить IE4.01 и выправить Security так, чтобы позволить запуск аплетов и создание
+   аплетами окон.
+3) Обратиться по адресу http://server1/guana/g_appl.gapplet.html заменив server1 на имя машины.
+ 
+
+--------------------------------------------------------------------------------------------
+                                  Настройка
+1) Поддерживается 2 метода определения сгенерированного при вставке новой записи IDENTITY: 
+   чтение @@IDENTITY и select max(id) from xx перед вставкой. За выбор метода отвечает 
+   следующий кусок кода из класса GApplet:
+ 
+ void InitProviderResolver( TableDataSet ds, String sName, TPgProvider pr, TResolver res ) throws RemoteException, DataSetException
+  {
+    ds.close();
+ 
+    MkBindMeta( ds, sName );
+ 
+    pr.setSizePage( ds.getMaxRows() );
+    pr.setCurPage( 0 );
+    pr.setNameQryOnServer( sName );
+    pr.setDataCtrlIntf( (IMDataControl)m_irRefControl );
+ 
+    res.setNameQryOnServer( sName );
+    res.setDataCtrlIntf( (IMDataControl)m_irRefControl );
+    res.setIdentityDetectMAX( false ); - здесь false означает первый метод, а true - второйю
+ 
+    ds.setProvider( pr ); ds.setResolver( res );
+    res.BindToPageProvider( pr );
+  }
+ 
+2) Имеется возможность выдачи отладочной информации. 
+   Для включения дампировки таблиц исправить в классе TResolver: static final  boolean B_DEBUG = false;
+   Для включения выдачи временной статистики исправить в GApplet:
+    public static final  boolean B_TRACE = false;
+    для сервера исправить в классе TMDataControl: static final  boolean B_TRACE = false.
+ 
+3) При ошибках в гридах ошибочные записи высвечиваются красным. 
+   Щелчком мыши слева от красной строки (на RowHeader) можно получить сообщение об ошибке 
+   в этой строке.
+
+
+ 

@@ -1,0 +1,36 @@
+Microsoft Developer Studio Workspace File, Format Version 6.00
+# WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
+
+###############################################################################
+
+Project: "guana"=.\guana.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Global:
+
+Package=<5>
+{{{
+}}}
+
+Package=<3>
+{{{
+    {67397AA3-7FB1-11D0-B148-00A0C922E820}
+    {CDE57A43-8B86-11D0-B3C6-00A0C90AEA82}
+    {58F3D268-FEDF-11D0-9C7F-0060081840F3}
+    {F0D2F21C-CCB0-11D0-A316-00AA00688B10}
+    {F0D2F219-CCB0-11D0-A316-00AA00688B10}
+    {C932BA85-4374-101B-A56C-00AA003668DC}
+    {20DD1B9E-87C4-11D1-8BE3-0000F8754DA1}
+}}}
+
+###############################################################################
+

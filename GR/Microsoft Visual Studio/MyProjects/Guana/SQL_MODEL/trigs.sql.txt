@@ -1,0 +1,941 @@
+/*create trigger tD_CategoryGuest on CategoryGuest for DELETE as
+begin
+  declare  @errno   int,
+           @errmsg  varchar(255)
+      delete CategoryGuest_BillCategory
+      from CategoryGuest_BillCategory,deleted
+      where
+          CategoryGuest_BillCategory.ID_CAT = deleted.ID_CAT
+
+      if exists (
+      select * from deleted,Guest
+      where
+          Guest.ID_CAT = deleted.ID_CAT
+    )
+    begin
+      select @errno  = 30001,
+             @errmsg = 'Cannot DELETE CategoryGuest because Guest exists.'
+      goto error
+    end
+
+
+      return
+error:
+    raiserror @errno @errmsg
+    rollback transaction
+end
+
+create trigger tU_CategoryGuest on CategoryGuest for UPDATE as
+begin
+  declare  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @insID_CAT int,
+           @errno   int,
+           @errmsg  varchar(255)
+
+  select @numrows = @@rowcount
+  if
+    update(ID_CAT)
+  begin
+    if @numrows = 1
+    begin
+      select @insID_CAT = inserted.ID_CAT
+        from inserted
+      update CategoryGuest_BillCategory
+      set
+        CategoryGuest_BillCategory.ID_CAT = @insID_CAT
+      from CategoryGuest_BillCategory,inserted,deleted
+      where
+        CategoryGuest_BillCategory.ID_CAT = deleted.ID_CAT
+    end
+    else
+    begin
+      select @errno = 30006,
+             @errmsg = 'Cannot cascade CategoryGuest UPDATE because more than one row has been affected.'
+      goto error
+    end
+  end
+
+  if
+    update(ID_CAT)
+  begin
+    if @numrows = 1
+    begin
+      select @insID_CAT = inserted.ID_CAT
+        from inserted
+      update Guest
+      set
+        Guest.ID_CAT = @insID_CAT
+      from Guest,inserted,deleted
+      where
+        Guest.ID_CAT = deleted.ID_CAT
+    end
+    else
+    begin
+      select @errno = 30006,
+             @errmsg = 'Cannot cascade CategoryGuest UPDATE because more than one row has been affected.'
+      goto error
+    end
+  end
+
+  return
+error:
+    raiserror @errno @errmsg
+    rollback transaction
+end
+*/
+
+
+/*create trigger tD_Guest on Guest for DELETE as
+
+begin
+  declare  @errno   int,
+           @errmsg  varchar(255)
+
+    delete GuestBill
+      from GuestBill,deleted
+      where
+
+        GuestBill.ID_GUEST = deleted.ID_GUEST
+
+
+
+    return
+error:
+    raiserror @errno @errmsg
+    rollback transaction
+end*/
+
+create trigger tI_Guest on Guest for INSERT as
+/* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+/* INSERT trigger on Guest */
+begin
+  declare  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @errno   int,
+           @errmsg  varchar(255)
+
+  select @numrows = @@rowcount
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  /* CategoryGuest Aee??aao Guest ON CHILD INSERT RESTRICT */
+  if
+    /* %ChildFK(" or",update) */
+    update(ID_CAT)
+  begin
+    select @nullcnt = 0
+    select @validcnt = count(*)
+      from inserted,CategoryGuest
+        where
+          /* %JoinFKPK(inserted,CategoryGuest) */
+          inserted.ID_CAT = CategoryGuest.ID_CAT
+    /* %NotnullFK(inserted," is null","select @nullcnt = count(*) from inserted where"," and") */
+    
+    if @validcnt + @nullcnt != @numrows
+    begin
+      select @errno  = 30002,
+             @errmsg = 'Cannot INSERT Guest because CategoryGuest does not exist.'
+      goto error
+    end
+  end
+
+
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  return
+error:
+    raiserror @errno @errmsg
+    rollback transaction
+end
+go
+
+create trigger tU_Guest on Guest for UPDATE as
+/* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+/* UPDATE trigger on Guest */
+begin
+  declare  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @insID_GUEST int,
+           @errno   int,
+           @errmsg  varchar(255)
+
+  select @numrows = @@rowcount
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  /* Guest Auieiaiu ia?eneaiey GuestBill ON PARENT UPDATE CASCADE */
+  if
+    /* %ParentPK(" or",update) */
+    update(ID_GUEST)
+  begin
+    if @numrows = 1
+    begin
+      select @insID_GUEST = inserted.ID_GUEST
+        from inserted
+      update GuestBill
+      set
+        /*  %JoinFKPK(GuestBill,@ins," = ",",") */
+        GuestBill.ID_GUEST = @insID_GUEST
+      from GuestBill,inserted,deleted
+      where
+        /*  %JoinFKPK(GuestBill,deleted," = "," and") */
+        GuestBill.ID_GUEST = deleted.ID_GUEST
+    end
+    else
+    begin
+      select @errno = 30006,
+             @errmsg = 'Cannot cascade Guest UPDATE because more than one row has been affected.'
+      goto error
+    end
+  end
+
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  /* CategoryGuest Aee??aao Guest ON CHILD UPDATE RESTRICT */
+  if
+    /* %ChildFK(" or",update) */
+    update(ID_CAT)
+  begin
+    select @nullcnt = 0
+    select @validcnt = count(*)
+      from inserted,CategoryGuest
+        where
+          /* %JoinFKPK(inserted,CategoryGuest) */
+          inserted.ID_CAT = CategoryGuest.ID_CAT
+    /* %NotnullFK(inserted," is null","select @nullcnt = count(*) from inserted where"," and") */
+    
+    if @validcnt + @nullcnt != @numrows
+    begin
+      select @errno  = 30007,
+             @errmsg = 'Cannot UPDATE Guest because CategoryGuest does not exist.'
+      goto error
+    end
+  end
+
+
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  return
+error:
+    raiserror @errno @errmsg
+    rollback transaction
+end
+go
+
+/*create trigger tD_GuestBill on GuestBill for DELETE as
+
+begin
+  declare  @errno   int,
+           @errmsg  varchar(255)
+
+    delete AdditionalCharge
+      from AdditionalCharge,deleted
+      where
+
+        AdditionalCharge.BILL_NO = deleted.BILL_NO
+
+
+    delete GuestBillData
+      from GuestBillData,deleted
+      where
+
+        GuestBillData.BILL_NO = deleted.BILL_NO
+
+
+
+    return
+error:
+    raiserror @errno @errmsg
+    rollback transaction
+end*/
+
+
+create trigger tI_GuestBill on GuestBill for INSERT as
+/* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+/* INSERT trigger on GuestBill */
+begin
+  declare  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @errno   int,
+           @errmsg  varchar(255)
+
+  select @numrows = @@rowcount
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  /* Guest Auieiaiu ia?eneaiey GuestBill ON CHILD INSERT RESTRICT */
+  if
+    /* %ChildFK(" or",update) */
+    update(ID_GUEST)
+  begin
+    select @nullcnt = 0
+    select @validcnt = count(*)
+      from inserted,Guest
+        where
+          /* %JoinFKPK(inserted,Guest) */
+          inserted.ID_GUEST = Guest.ID_GUEST
+    /* %NotnullFK(inserted," is null","select @nullcnt = count(*) from inserted where"," and") */
+    
+    if @validcnt + @nullcnt != @numrows
+    begin
+      select @errno  = 30002,
+             @errmsg = 'Cannot INSERT GuestBill because Guest does not exist.'
+      goto error
+    end
+  end
+
+
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  return
+error:
+    raiserror @errno @errmsg
+    rollback transaction
+end
+go
+
+/*create trigger tU_GuestBill on GuestBill for UPDATE as
+
+begin
+  declare  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @insBILL_NO int,
+           @errno   int,
+           @errmsg  varchar(255)
+
+  select @numrows = @@rowcount
+
+  if
+
+    update(BILL_NO)
+  begin
+    if @numrows = 1
+    begin
+      select @insBILL_NO = inserted.BILL_NO
+        from inserted
+      update AdditionalCharge
+      set
+
+        AdditionalCharge.BILL_NO = @insBILL_NO
+      from AdditionalCharge,inserted,deleted
+      where
+
+        AdditionalCharge.BILL_NO = deleted.BILL_NO
+    end
+    else
+    begin
+      select @errno = 30006,
+             @errmsg = 'Cannot cascade GuestBill UPDATE because more than one row has been affected.'
+      goto error
+    end
+  end
+
+  if
+
+    update(BILL_NO)
+  begin
+    if @numrows = 1
+    begin
+      select @insBILL_NO = inserted.BILL_NO
+        from inserted
+      update GuestBillData
+      set
+
+        GuestBillData.BILL_NO = @insBILL_NO
+      from GuestBillData,inserted,deleted
+      where
+
+        GuestBillData.BILL_NO = deleted.BILL_NO
+    end
+    else
+    begin
+      select @errno = 30006,
+             @errmsg = 'Cannot cascade GuestBill UPDATE because more than one row has been affected.'
+      goto error
+    end
+  end
+
+
+  if
+
+    update(ID_GUEST)
+  begin
+    select @nullcnt = 0
+    select @validcnt = count(*)
+      from inserted,Guest
+        where
+
+          inserted.ID_GUEST = Guest.ID_GUEST
+
+    
+    if @validcnt + @nullcnt != @numrows
+    begin
+      select @errno  = 30007,
+             @errmsg = 'Cannot UPDATE GuestBill because Guest does not exist.'
+      goto error
+    end
+  end
+
+
+
+  return
+error:
+    raiserror @errno @errmsg
+    rollback transaction
+end
+*/
+
+create trigger tD_BillCategory on BillCategory for DELETE as
+/* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+/* DELETE trigger on BillCategory */
+begin
+  declare  @errno   int,
+           @errmsg  varchar(255)
+    /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+    /* BillCategory Oneoaa eniieuciaaia AdditionalCharge ON PARENT DELETE RESTRICT */
+    if exists (
+      select * from deleted,AdditionalCharge
+      where
+        /*  %JoinFKPK(AdditionalCharge,deleted," = "," and") */
+        AdditionalCharge.ID_BILL = deleted.ID_BILL
+    )
+    begin
+      select @errno  = 30001,
+             @errmsg = 'Cannot DELETE BillCategory because AdditionalCharge exists.'
+      goto error
+    end
+
+    /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+    /* BillCategory R/14 CategoryGuest_BillCategory ON PARENT DELETE RESTRICT */
+    if exists (
+      select * from deleted,CategoryGuest_BillCategory
+      where
+        /*  %JoinFKPK(CategoryGuest_BillCategory,deleted," = "," and") */
+        CategoryGuest_BillCategory.ID_BILL = deleted.ID_BILL
+    )
+    begin
+      select @errno  = 30001,
+             @errmsg = 'Cannot DELETE BillCategory because CategoryGuest_BillCategory exists.'
+      goto error
+    end
+
+
+    /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+    return
+error:
+    raiserror @errno @errmsg
+    rollback transaction
+end
+go
+
+create trigger tU_BillCategory on BillCategory for UPDATE as
+/* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+/* UPDATE trigger on BillCategory */
+begin
+  declare  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @insID_BILL int,
+           @errno   int,
+           @errmsg  varchar(255)
+
+  select @numrows = @@rowcount
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  /* BillCategory Oneoaa eniieuciaaia AdditionalCharge ON PARENT UPDATE RESTRICT */
+  if
+    /* %ParentPK(" or",update) */
+    update(ID_BILL)
+  begin
+    if exists (
+      select * from deleted,AdditionalCharge
+      where
+        /*  %JoinFKPK(AdditionalCharge,deleted," = "," and") */
+        AdditionalCharge.ID_BILL = deleted.ID_BILL
+    )
+    begin
+      select @errno  = 30005,
+             @errmsg = 'Cannot UPDATE BillCategory because AdditionalCharge exists.'
+      goto error
+    end
+  end
+
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  /* BillCategory R/14 CategoryGuest_BillCategory ON PARENT UPDATE RESTRICT */
+  if
+    /* %ParentPK(" or",update) */
+    update(ID_BILL)
+  begin
+    if exists (
+      select * from deleted,CategoryGuest_BillCategory
+      where
+        /*  %JoinFKPK(CategoryGuest_BillCategory,deleted," = "," and") */
+        CategoryGuest_BillCategory.ID_BILL = deleted.ID_BILL
+    )
+    begin
+      select @errno  = 30005,
+             @errmsg = 'Cannot UPDATE BillCategory because CategoryGuest_BillCategory exists.'
+      goto error
+    end
+  end
+
+
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  return
+error:
+    raiserror @errno @errmsg
+    rollback transaction
+end
+go
+
+create trigger tD_Room on Room for DELETE as
+/* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+/* DELETE trigger on Room */
+begin
+  declare  @errno   int,
+           @errmsg  varchar(255)
+    /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+    /* Room Eniieuciaaeanu ainoai GuestBillData ON PARENT DELETE RESTRICT */
+    if exists (
+      select * from deleted,GuestBillData
+      where
+        /*  %JoinFKPK(GuestBillData,deleted," = "," and") */
+        GuestBillData.ID_ROOM = deleted.ID_ROOM
+    )
+    begin
+      select @errno  = 30001,
+             @errmsg = 'Cannot DELETE Room because GuestBillData exists.'
+      goto error
+    end
+
+
+    /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+    return
+error:
+    raiserror @errno @errmsg
+    rollback transaction
+end
+go
+
+create trigger tU_Room on Room for UPDATE as
+/* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+/* UPDATE trigger on Room */
+begin
+  declare  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @insID_ROOM int,
+           @errno   int,
+           @errmsg  varchar(255)
+
+  select @numrows = @@rowcount
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  /* Room Eniieuciaaeanu ainoai GuestBillData ON PARENT UPDATE RESTRICT */
+  if
+    /* %ParentPK(" or",update) */
+    update(ID_ROOM)
+  begin
+    if exists (
+      select * from deleted,GuestBillData
+      where
+        /*  %JoinFKPK(GuestBillData,deleted," = "," and") */
+        GuestBillData.ID_ROOM = deleted.ID_ROOM
+    )
+    begin
+      select @errno  = 30005,
+             @errmsg = 'Cannot UPDATE Room because GuestBillData exists.'
+      goto error
+    end
+  end
+
+
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  return
+error:
+    raiserror @errno @errmsg
+    rollback transaction
+end
+go
+
+create trigger tI_GuestBillData on GuestBillData for INSERT as
+/* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+/* INSERT trigger on GuestBillData */
+begin
+  declare  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @errno   int,
+           @errmsg  varchar(255)
+
+  select @numrows = @@rowcount
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  /* Room Eniieuciaaeanu ainoai GuestBillData ON CHILD INSERT RESTRICT */
+  if
+    /* %ChildFK(" or",update) */
+    update(ID_ROOM)
+  begin
+    select @nullcnt = 0
+    select @validcnt = count(*)
+      from inserted,Room
+        where
+          /* %JoinFKPK(inserted,Room) */
+          inserted.ID_ROOM = Room.ID_ROOM
+    /* %NotnullFK(inserted," is null","select @nullcnt = count(*) from inserted where"," and") */
+    
+    if @validcnt + @nullcnt != @numrows
+    begin
+      select @errno  = 30002,
+             @errmsg = 'Cannot INSERT GuestBillData because Room does not exist.'
+      goto error
+    end
+  end
+
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  /* GuestBill Caieiae eiiiaou GuestBillData ON CHILD INSERT RESTRICT */
+  if
+    /* %ChildFK(" or",update) */
+    update(BILL_NO)
+  begin
+    select @nullcnt = 0
+    select @validcnt = count(*)
+      from inserted,GuestBill
+        where
+          /* %JoinFKPK(inserted,GuestBill) */
+          inserted.BILL_NO = GuestBill.BILL_NO
+    /* %NotnullFK(inserted," is null","select @nullcnt = count(*) from inserted where"," and") */
+    
+    if @validcnt + @nullcnt != @numrows
+    begin
+      select @errno  = 30002,
+             @errmsg = 'Cannot INSERT GuestBillData because GuestBill does not exist.'
+      goto error
+    end
+  end
+
+
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  return
+error:
+    raiserror @errno @errmsg
+    rollback transaction
+end
+go
+
+create trigger tU_GuestBillData on GuestBillData for UPDATE as
+/* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+/* UPDATE trigger on GuestBillData */
+begin
+  declare  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @insID_DB int,
+           @errno   int,
+           @errmsg  varchar(255)
+
+  select @numrows = @@rowcount
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  /* Room Eniieuciaaeanu ainoai GuestBillData ON CHILD UPDATE RESTRICT */
+  if
+    /* %ChildFK(" or",update) */
+    update(ID_ROOM)
+  begin
+    select @nullcnt = 0
+    select @validcnt = count(*)
+      from inserted,Room
+        where
+          /* %JoinFKPK(inserted,Room) */
+          inserted.ID_ROOM = Room.ID_ROOM
+    /* %NotnullFK(inserted," is null","select @nullcnt = count(*) from inserted where"," and") */
+    
+    if @validcnt + @nullcnt != @numrows
+    begin
+      select @errno  = 30007,
+             @errmsg = 'Cannot UPDATE GuestBillData because Room does not exist.'
+      goto error
+    end
+  end
+
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  /* GuestBill Caieiae eiiiaou GuestBillData ON CHILD UPDATE RESTRICT */
+  if
+    /* %ChildFK(" or",update) */
+    update(BILL_NO)
+  begin
+    select @nullcnt = 0
+    select @validcnt = count(*)
+      from inserted,GuestBill
+        where
+          /* %JoinFKPK(inserted,GuestBill) */
+          inserted.BILL_NO = GuestBill.BILL_NO
+    /* %NotnullFK(inserted," is null","select @nullcnt = count(*) from inserted where"," and") */
+    
+    if @validcnt + @nullcnt != @numrows
+    begin
+      select @errno  = 30007,
+             @errmsg = 'Cannot UPDATE GuestBillData because GuestBill does not exist.'
+      goto error
+    end
+  end
+
+
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  return
+error:
+    raiserror @errno @errmsg
+    rollback transaction
+end
+go
+
+create trigger tI_CategoryGuest_BillCategory on CategoryGuest_BillCategory for INSERT as
+/* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+/* INSERT trigger on CategoryGuest_BillCategory */
+begin
+  declare  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @errno   int,
+           @errmsg  varchar(255)
+
+  select @numrows = @@rowcount
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  /* BillCategory R/14 CategoryGuest_BillCategory ON CHILD INSERT RESTRICT */
+  if
+    /* %ChildFK(" or",update) */
+    update(ID_BILL)
+  begin
+    select @nullcnt = 0
+    select @validcnt = count(*)
+      from inserted,BillCategory
+        where
+          /* %JoinFKPK(inserted,BillCategory) */
+          inserted.ID_BILL = BillCategory.ID_BILL
+    /* %NotnullFK(inserted," is null","select @nullcnt = count(*) from inserted where"," and") */
+    
+    if @validcnt + @nullcnt != @numrows
+    begin
+      select @errno  = 30002,
+             @errmsg = 'Cannot INSERT CategoryGuest_BillCategory because BillCategory does not exist.'
+      goto error
+    end
+  end
+
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  /* CategoryGuest R/13 CategoryGuest_BillCategory ON CHILD INSERT RESTRICT */
+  if
+    /* %ChildFK(" or",update) */
+    update(ID_CAT)
+  begin
+    select @nullcnt = 0
+    select @validcnt = count(*)
+      from inserted,CategoryGuest
+        where
+          /* %JoinFKPK(inserted,CategoryGuest) */
+          inserted.ID_CAT = CategoryGuest.ID_CAT
+    /* %NotnullFK(inserted," is null","select @nullcnt = count(*) from inserted where"," and") */
+    
+    if @validcnt + @nullcnt != @numrows
+    begin
+      select @errno  = 30002,
+             @errmsg = 'Cannot INSERT CategoryGuest_BillCategory because CategoryGuest does not exist.'
+      goto error
+    end
+  end
+
+
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  return
+error:
+    raiserror @errno @errmsg
+    rollback transaction
+end
+go
+
+create trigger tU_CategoryGuest_BillCategory on CategoryGuest_BillCategory for UPDATE as
+/* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+/* UPDATE trigger on CategoryGuest_BillCategory */
+begin
+  declare  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @insID_CAT int, 
+           @insID_BILL int,
+           @errno   int,
+           @errmsg  varchar(255)
+
+  select @numrows = @@rowcount
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  /* BillCategory R/14 CategoryGuest_BillCategory ON CHILD UPDATE RESTRICT */
+  if
+    /* %ChildFK(" or",update) */
+    update(ID_BILL)
+  begin
+    select @nullcnt = 0
+    select @validcnt = count(*)
+      from inserted,BillCategory
+        where
+          /* %JoinFKPK(inserted,BillCategory) */
+          inserted.ID_BILL = BillCategory.ID_BILL
+    /* %NotnullFK(inserted," is null","select @nullcnt = count(*) from inserted where"," and") */
+    
+    if @validcnt + @nullcnt != @numrows
+    begin
+      select @errno  = 30007,
+             @errmsg = 'Cannot UPDATE CategoryGuest_BillCategory because BillCategory does not exist.'
+      goto error
+    end
+  end
+
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  /* CategoryGuest R/13 CategoryGuest_BillCategory ON CHILD UPDATE RESTRICT */
+  if
+    /* %ChildFK(" or",update) */
+    update(ID_CAT)
+  begin
+    select @nullcnt = 0
+    select @validcnt = count(*)
+      from inserted,CategoryGuest
+        where
+          /* %JoinFKPK(inserted,CategoryGuest) */
+          inserted.ID_CAT = CategoryGuest.ID_CAT
+    /* %NotnullFK(inserted," is null","select @nullcnt = count(*) from inserted where"," and") */
+    
+    if @validcnt + @nullcnt != @numrows
+    begin
+      select @errno  = 30007,
+             @errmsg = 'Cannot UPDATE CategoryGuest_BillCategory because CategoryGuest does not exist.'
+      goto error
+    end
+  end
+
+
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  return
+error:
+    raiserror @errno @errmsg
+    rollback transaction
+end
+go
+
+create trigger tI_AdditionalCharge on AdditionalCharge for INSERT as
+/* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+/* INSERT trigger on AdditionalCharge */
+begin
+  declare  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @errno   int,
+           @errmsg  varchar(255)
+
+  select @numrows = @@rowcount
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  /* BillCategory Oneoaa eniieuciaaia AdditionalCharge ON CHILD INSERT RESTRICT */
+  if
+    /* %ChildFK(" or",update) */
+    update(ID_BILL)
+  begin
+    select @nullcnt = 0
+    select @validcnt = count(*)
+      from inserted,BillCategory
+        where
+          /* %JoinFKPK(inserted,BillCategory) */
+          inserted.ID_BILL = BillCategory.ID_BILL
+    /* %NotnullFK(inserted," is null","select @nullcnt = count(*) from inserted where"," and") */
+    
+    if @validcnt + @nullcnt != @numrows
+    begin
+      select @errno  = 30002,
+             @errmsg = 'Cannot INSERT AdditionalCharge because BillCategory does not exist.'
+      goto error
+    end
+  end
+
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  /* GuestBill Ia?eneaii AdditionalCharge ON CHILD INSERT RESTRICT */
+  if
+    /* %ChildFK(" or",update) */
+    update(BILL_NO)
+  begin
+    select @nullcnt = 0
+    select @validcnt = count(*)
+      from inserted,GuestBill
+        where
+          /* %JoinFKPK(inserted,GuestBill) */
+          inserted.BILL_NO = GuestBill.BILL_NO
+    /* %NotnullFK(inserted," is null","select @nullcnt = count(*) from inserted where"," and") */
+    
+    if @validcnt + @nullcnt != @numrows
+    begin
+      select @errno  = 30002,
+             @errmsg = 'Cannot INSERT AdditionalCharge because GuestBill does not exist.'
+      goto error
+    end
+  end
+
+
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  return
+error:
+    raiserror @errno @errmsg
+    rollback transaction
+end
+go
+
+create trigger tU_AdditionalCharge on AdditionalCharge for UPDATE as
+/* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+/* UPDATE trigger on AdditionalCharge */
+begin
+  declare  @numrows int,
+           @nullcnt int,
+           @validcnt int,
+           @insBILL_NO int, 
+           @insID_BILL int,
+           @errno   int,
+           @errmsg  varchar(255)
+
+  select @numrows = @@rowcount
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  /* BillCategory Oneoaa eniieuciaaia AdditionalCharge ON CHILD UPDATE RESTRICT */
+  if
+    /* %ChildFK(" or",update) */
+    update(ID_BILL)
+  begin
+    select @nullcnt = 0
+    select @validcnt = count(*)
+      from inserted,BillCategory
+        where
+          /* %JoinFKPK(inserted,BillCategory) */
+          inserted.ID_BILL = BillCategory.ID_BILL
+    /* %NotnullFK(inserted," is null","select @nullcnt = count(*) from inserted where"," and") */
+    
+    if @validcnt + @nullcnt != @numrows
+    begin
+      select @errno  = 30007,
+             @errmsg = 'Cannot UPDATE AdditionalCharge because BillCategory does not exist.'
+      goto error
+    end
+  end
+
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  /* GuestBill Ia?eneaii AdditionalCharge ON CHILD UPDATE RESTRICT */
+  if
+    /* %ChildFK(" or",update) */
+    update(BILL_NO)
+  begin
+    select @nullcnt = 0
+    select @validcnt = count(*)
+      from inserted,GuestBill
+        where
+          /* %JoinFKPK(inserted,GuestBill) */
+          inserted.BILL_NO = GuestBill.BILL_NO
+    /* %NotnullFK(inserted," is null","select @nullcnt = count(*) from inserted where"," and") */
+    
+    if @validcnt + @nullcnt != @numrows
+    begin
+      select @errno  = 30007,
+             @errmsg = 'Cannot UPDATE AdditionalCharge because GuestBill does not exist.'
+      goto error
+    end
+  end
+
+
+  /* ERwin Builtin Thu Mar 11 14:33:26 1999 */
+  return
+error:
+    raiserror @errno @errmsg
+    rollback transaction
+end

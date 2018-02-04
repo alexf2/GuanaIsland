@@ -1,0 +1,46 @@
+// Microsoft Developer Studio generated Help ID include file.
+// Used by guana.rc
+//
+#define HIDC_BUTTON_COMMENT             0x806b0430    // IDD_DIALOG_BILL
+#define HIDC_BUTTON_JUMP                0x806c0459    // IDD_DIALOG_TIME
+#define HIDC_BUTTON_MONEYBACK           0x806b0426    // IDD_DIALOG_BILL
+#define HIDC_BUTTON_PAYENROL            0x806b0423    // IDD_DIALOG_BILL
+#define HIDC_BUTTON_PRT2                0x806b0443    // IDD_DIALOG_BILL
+#define HIDC_BUTTON_REFILL              0x806c044e    // IDD_DIALOG_TIME
+#define HIDC_BUTTON_REMOVE              0x806c0460    // IDD_DIALOG_TIME
+#define HIDC_BUTTON_REPORT              0x806c044c    // IDD_DIALOG_TIME
+#define HIDC_BUTTON_SEARCH              0x806b042e    // IDD_DIALOG_BILL
+#define HIDC_BUTTON_WIZ                 0x806b0442    // IDD_DIALOG_BILL
+#define HIDC_DATAGRID_BILLCAT           0x806a03f0    // IDD_DIALOG_TECH
+#define HIDC_DATAGRID_GB                0x806c0445    // IDD_DIALOG_TIME
+#define HIDC_DATAGRID_GUESTCAT          0x806a03f1    // IDD_DIALOG_TECH
+#define HIDC_DATAGRID_RECOMMBILLCAT     0x806a03f2    // IDD_DIALOG_TECH
+#define HIDC_DATAGRID_ROOM              0x806a03ef    // IDD_DIALOG_TECH
+#define HIDC_DATALIST_CAT               0x806c044f    // IDD_DIALOG_TIME
+#define HIDC_DATETIMEPICKER1            0x806c0449    // IDD_DIALOG_TIME
+#define HIDC_DATETIMEPICKER2            0x806c044a    // IDD_DIALOG_TIME
+#define HIDC_EDIT_BALANCEDUE            0x806b043c    // IDD_DIALOG_BILL
+#define HIDC_EDIT_BILLNO                0x806b0433    // IDD_DIALOG_BILL
+#define HIDC_EDIT_DEPOSIT               0x806b043b    // IDD_DIALOG_BILL
+#define HIDC_EDIT_DETAILS               0x806b0436    // IDD_DIALOG_BILL
+#define HIDC_EDIT_FOLIO                 0x806b0432    // IDD_DIALOG_BILL
+#define HIDC_EDIT_GI                    0x806b0435    // IDD_DIALOG_BILL
+#define HIDC_EDIT_PAYMENTS              0x806b0438    // IDD_DIALOG_BILL
+#define HIDC_EDIT_SUBTOTAL              0x806b043e    // IDD_DIALOG_BILL
+#define HIDC_EDIT_TAXANDSERV            0x806b0439    // IDD_DIALOG_BILL
+#define HIDC_EDIT_TOTAL                 0x806b043a    // IDD_DIALOG_BILL
+#define HIDC_EDIT_TOTALADD              0x806b0437    // IDD_DIALOG_BILL
+#define HIDC_EDIT_TOTALROOMS            0x806b043d    // IDD_DIALOG_BILL
+#define HIDC_PICK_DATE                  0x806b0441    // IDD_DIALOG_BILL
+#define HIDC_RADIO_ALL                  0x806c0447    // IDD_DIALOG_TIME
+#define HIDC_RADIO_BALANCEDUE           0x806b0419    // IDD_DIALOG_BILL
+#define HIDC_RADIO_CAT                  0x806b0411    // IDD_DIALOG_BILL
+#define HIDC_RADIO_CITY                 0x806b0410    // IDD_DIALOG_BILL
+#define HIDC_RADIO_DATE                 0x806b0416    // IDD_DIALOG_BILL
+#define HIDC_RADIO_DEPOSIT              0x806b0413    // IDD_DIALOG_BILL
+#define HIDC_RADIO_FNAM                 0x806b040f    // IDD_DIALOG_BILL
+#define HIDC_RADIO_FOLIO                0x806b0417    // IDD_DIALOG_BILL
+#define HIDC_RADIO_NAM                  0x806a040d    // IDD_DIALOG_TECH
+#define HIDC_RADIO_NIGHTS               0x806b0418    // IDD_DIALOG_BILL
+#define HIDC_RADIO_RATE                 0x806a040e    // IDD_DIALOG_TECH
+#define HIDC_RADIO_SEL                  0x806c0448    // IDD_DIALOG_TIME
