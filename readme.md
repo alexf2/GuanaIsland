@@ -1,12 +1,8 @@
-## Reliability Analyst
+## Guana Island Billing System
 
-Представляет из себя десктопное Win32 приложение на C++ / Visual Studio 6 / MFC для анализа надёжностных схем при помощи схематического моделирования двухполюсниками. Имеет Visio-подобный редактор для построения схем и пошаговый режим их упрощения с целью рассчёта показателей надёжности.
+A billing system, which implemented in two versions: MFC against MS SQL and Borland C-Builder against MS Access. 
 
-**Надёжностная модель системы**<br/>
-![Надёжностная модель системы](./DOC/schema.png "Надёжностная модель системы")
+**Remote server architecture**
+![Server architecture](./demo-img/g.png "Server architecture")
 
-**UI**<br/>
-![Screen](./DOC/interf.png "Screen")
-
->[Полная документация](./DOC/dpiplom.doc)<br/>
-[Исполняемые файлы Win32](https://github.com/alexf2/ReliabilityAnalyst/releases/download/Release1/Release1.zip)
+>[Full doc](./g_mfc/DOC/plan.doc)
