@@ -2,6 +2,8 @@
 
 A billing system, which implemented in two versions: MFC against MS SQL and Borland C-Builder against MS Access. 
 
+![Screenshot](./demo-img/guana2.jpg "Screenshot")
+
 **Remote server architecture**<br />
 ![Server architecture](./demo-img/g.png "Server architecture")
 
